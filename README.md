@@ -63,26 +63,20 @@ wlexec "echosa" 2
 ```
 
 ##### output
+```bash
 ======================================== Program starts ========================================
-
 Command: "echosa"
-
 "echosa" 1th execution failure, error message:
-
 /Users/msw/Desktop/wlexec/wlexec: line 101: echosa: command not found
-
 "echosa" 2th execution failure, error message:
-
 /Users/msw/Desktop/wlexec/wlexec: line 101: echosa: command not found
-
 Terminate the process. 2 attempts have been made
-
 ======================================== Program end ===========================================
+```
 
+> Execute commands in quotes
 
->> Execute commands in quotes
-
->> Thank you for pointing out any mistakes
+> Thank you for pointing out any mistakes
 
 
 
