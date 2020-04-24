@@ -32,12 +32,18 @@ source ~/.bash_profile
 
 #### help
 ```bash
-wlexec OR wlexec --help OR wlexec -H
+wlexec
+# OR
+wlexec --help
+# OR 
+wlexec -H
 ```
 
 #### version
 ```bash
-wlexec --version OR wlexec -V
+wlexec --version
+# OR
+wlexec -V
 ```
 
 #### Execute the command
@@ -50,12 +56,14 @@ wlexec "shell command" attempts
 wlexec "echo 1"
 ```
 ##### output
+```bash
 ======================================== Program starts ========================================
 Command: "echo 1"
 echo 1 command execute OK!
 exec result:
  1
 ======================================== Program end ===========================================
+```
 
 #### Execute a limited number of commands
 ```bash
