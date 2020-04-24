@@ -1,0 +1,155 @@
+#!/bin/bash
+
+# linux
+# chmod u+x wlexec
+# sudo mv wlexec /bin/
+
+# mac
+# vi ~/.bash_profile
+# alias wlexec="bash {file_dir}/wlexec"
+# source ~/.bash_profile
+
+
+function get_script_name(){
+    old=$IFS
+    IFS=/
+
+    if [[ $0 =~ "/" ]]; then
+        pname=($0)
+        SCRIPT_NAME=${pname[${#pname[*]}-1]}
+
+    else
+        SCRIPT_NAME=$0
+    fi
+    IFS=$old
+
+}
+
+# Get the script name
+get_script_name
+
+
+# Background color setting
+SUCCESS_COLOR="\033[0;32m"
+SUCCESS_BOLD_COLOR="\033[1;32m"
+SUCCESS_FLICKER_COLOR="\033[5;32m"
+ERROR_COLOR="\033[0;31m"
+ERROR_FLICKER_COLOR="\033[5;31m"
+WARNING_COLOR="\033[1;33m"
+WARNING_UNDERLINE_COLOR="\033[4;33m"
+END_SYMBOL="\033[0m"
+
+
+HELP_DOCS="
+This is a script for repeating shell commands\n
+Use:\n
+    \t${WARNING_COLOR}${SCRIPT_NAME} 'shell command' attempts${END_SYMBOL}\n
+
+Parameters:\n
+    \tshell command\n
+        \t\t--help, -H\n
+            \t\t\t\tGet help documentation\n
+        \t\t--version, -V\n
+            \t\t\t\tGet ${SCRIPT_NAME} version\n
+
+        \t\tshell command\n
+            \t\t\t\tNote that the first parameter needs to be enclosed in double quotes\n
+            \t\t\t\tA correct shell command\n
+            \t\t\t\tsample: which pip\n
+    \tattempts\n
+        \t\tThe number of times the command was attempted\n
+        \t\tIt can also be null, which represents unrestricted retry or user termination of the process\n
+        \t\texample\n
+            \t\t\t\t3: With or without success, run up to 3 times\n
+
+Use the sample:\n
+    \t${WARNING_COLOR}${SCRIPT_NAME} 'which pip' 5${END_SYMBOL}\n
+    \tThis is using up to 5 runs of the 'which pip' shell command
+"
+
+
+VERSION="1.0.0"
+
+PROGRAM_START="${SUCCESS_COLOR}======================================== Program starts ========================================${END_SYMBOL}"
+SUCCESS_END="${SUCCESS_COLOR}======================================== Program end ===========================================${END_SYMBOL}"
+
+
+function success()
+{
+    echo -e "${SUCCESS_FLICKER_COLOR}$1 command execute OK!${END_SYMBOL}\nexec result:\n ${SUCCESS_BOLD_COLOR}$2${END_SYMBOL}"
+}
+
+
+function error()
+{
+
+    error_msg="${WARNING_COLOR}\"$1\"${END_SYMBOL} ${ERROR_COLOR}$2th${END_SYMBOL} execution failure, error message:\n${ERROR_COLOR}$3${END_SYMBOL}"
+    
+    if [[ $4 ]]; then
+        echo -e "${error_msg}\n${ERROR_FLICKER_COLOR}Terminate the process. $2 attempts have been made${END_SYMBOL}"
+    else
+        echo -e ${error_msg}
+    fi
+}
+
+
+function run()
+{
+    local exec_count=0
+    echo -e Command: "${WARNING_UNDERLINE_COLOR}\"$1\"${END_SYMBOL}"
+    while true ; do
+        exec_result=`$1 2>&1`
+        if [ $? == 0 ] ; then
+            success "$1" "$exec_result"
+            break;
+        else
+            ((exec_count++))
+            if [[ $exec_count -eq $2 ]]; then
+                error "$1" $exec_count "$exec_result" "$2"
+                break;
+            else
+                error "$1" $exec_count "$exec_result"
+            fi
+            sleep 2
+        fi
+    done
+}
+
+
+function start()
+{
+    case $1 in 
+        "--help"|"-H"|"")
+            echo -e $HELP_DOCS;;
+        "--version"|"-V")
+            echo -e $VERSION;;
+        *)
+            echo -e ${PROGRAM_START}
+            run "$1" $2
+            echo -e ${SUCCESS_END}
+    esac
+}
+
+
+# Gets the user to press the terminate key
+trap "onCtrlC" INT
+function onCtrlC () {
+    echo -e "${ERROR_FLICKER_COLOR}er termination process\rUs${END_SYMBOL}"
+    echo -e ${SUCCESS_END}
+    exit 1
+}
+
+
+
+if [[ $# -gt 2 ]]; then
+    echo -e "Get extra parameters, See the help document using ${WARNING_UNDERLINE_COLOR}--help${END_SYMBOL} or ${WARNING_UNDERLINE_COLOR}-H${END_SYMBOL}"
+else
+    start "$1" "$2"
+fi
+
+
+
+
+
+
+
