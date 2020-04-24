@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# linux
-# chmod u+x wlexec
-# sudo mv wlexec /bin/
-
-# mac
-# vi ~/.bash_profile
-# alias wlexec="bash {file_dir}/wlexec"
-# source ~/.bash_profile
-
 
 function get_script_name(){
     old=$IFS
@@ -146,10 +137,3 @@ if [[ $# -gt 2 ]]; then
 else
     start "$1" "$2"
 fi
-
-
-
-
-
-
-
